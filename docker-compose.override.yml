@@ -1,0 +1,4 @@
+services:
+  LibreChat:
+    volumes:
+      - ./librechat.yaml:/app/librechat.yaml

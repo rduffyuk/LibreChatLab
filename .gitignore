@@ -1,0 +1,36 @@
+# Environment variables
+.env*
+!.env.example
+
+# Configuration files that may contain secrets
+librechat.override.yaml
+librechat.override.yml
+
+# Logs
+*.log
+logs/
+
+# Data directories
+data/
+uploads/
+images/
+
+# Node modules
+node_modules/
+
+# IDE files
+.vscode/settings.json
+.idea/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# Build artifacts
+dist/
+build/
