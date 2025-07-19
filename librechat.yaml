@@ -1,0 +1,161 @@
+# Optimized LibreChat Configuration for ISP Network Automation Lab
+# RTX 4080 16GB VRAM - Multimodal Focus
+# Updated January 2025
+
+version: 1.2.8
+
+endpoints:
+  custom:
+    # Flagship multimodal model - like GPT-4 or Claude 3.5 Sonnet
+    - name: "Multimodal Pro"
+      apiKey: "ollama"
+      baseURL: "http://172.17.0.1:11434/v1"
+      models:
+        default: ["qwen2.5vl:72b"]
+      titleConvo: true
+      titleModel: "qwen2.5vl:72b"
+      modelDisplayLabel: "Multimodal Pro"
+      
+    # Specialized coding model - like GitHub Copilot or Codex
+    - name: "Code Specialist"
+      apiKey: "ollama"
+      baseURL: "http://172.17.0.1:11434/v1"
+      models:
+        default: ["qwen2.5-coder:32b"]
+      titleConvo: true
+      titleModel: "qwen2.5-coder:32b"
+      modelDisplayLabel: "Code Specialist"
+      
+    # Balanced multimodal - like Claude 3 Haiku or GPT-4 Turbo
+    - name: "Multimodal Standard"
+      apiKey: "ollama"
+      baseURL: "http://172.17.0.1:11434/v1"
+      models:
+        default: ["qwen2.5vl:7b"]
+      titleConvo: true
+      titleModel: "qwen2.5vl:7b"
+      modelDisplayLabel: "Multimodal Standard"
+      
+    # Google's flagship - like Gemini Pro
+    - name: "Gemma Pro"
+      apiKey: "ollama"
+      baseURL: "http://172.17.0.1:11434/v1"
+      models:
+        default: ["gemma3:27b"]
+      titleConvo: true
+      titleModel: "gemma3:27b"
+      modelDisplayLabel: "Gemma Pro"
+      
+    # Fast multimodal - like Gemini Flash or Claude 3 Haiku
+    - name: "Multimodal Lite"
+      apiKey: "ollama"
+      baseURL: "http://172.17.0.1:11434/v1"
+      models:
+        default: ["qwen2.5vl:3b"]
+      titleConvo: true
+      titleModel: "qwen2.5vl:3b"
+      modelDisplayLabel: "Multimodal Lite"
+      
+    # Ultra-fast text - like GPT-3.5 Turbo
+    - name: "Text Express"
+      apiKey: "ollama"
+      baseURL: "http://172.17.0.1:11434/v1"
+      models:
+        default: ["qwen2.5:3b"]
+      titleConvo: true
+      titleModel: "qwen2.5:3b"
+      modelDisplayLabel: "Text Express"
+
+  # Agent configuration - DISABLE OCR, ENABLE RAG
+  agents:
+    recursionLimit: 25
+    maxRecursionLimit: 50
+    disableBuilder: false
+    # Remove 'ocr' capability - use RAG for file processing
+    capabilities:
+      - "execute_code"
+      - "file_search"    # Uses your RAG API + vector database
+      - "actions" 
+      - "tools"
+      - "artifacts"
+      - "web_search"
+      # - "ocr"          # DISABLED - no more OCR errors
+
+# File configuration - Optimized for network automation files
+fileConfig:
+  # Global settings
+  serverFileSizeLimit: 95  # MB
+  avatarSizeLimit: 2       # MB
+  
+  endpoints:
+    # Assistants (keep existing config)
+    assistants:
+      fileFilter: [".pdf",".txt",".md",".yaml",".yml",".json",".py",".sh",".conf",".cfg",".log",".jpg",".jpeg",".png",".gif",".webp"]
+      fileSizeLimit: 500
+      totalSizeLimit: 5000
+    
+    # Custom endpoints - ALL support file uploads via RAG
+    custom:
+      fileLimit: 15
+      fileSizeLimit: 95
+      totalSizeLimit: 750
+      # Network automation file types
+      supportedMimeTypes:
+        # Text files
+        - "text/plain"
+        - "text/markdown"
+        - "text/csv"
+        - "text/yaml"
+        - "application/x-yaml"
+        - "application/json"
+        - "text/x-config"
+        - "application/x-ini"
+        - "text/x-log"
+        # Code files
+        - "text/x-python"
+        - "application/x-shellscript"
+        - "text/x-java-source"
+        - "text/javascript"
+        # Documents  
+        - "application/pdf"
+        # Images (for network diagrams, screenshots)
+        - "image/jpeg"
+        - "image/png"
+        - "image/gif"
+        - "image/webp"
+        - "image/svg+xml"
+    
+    # Default for any other endpoints
+    default:
+      fileLimit: 10
+      fileSizeLimit: 95
+      totalSizeLimit: 500
+      supportedMimeTypes:
+        - "text/plain"
+        - "text/markdown"
+        - "application/pdf"
+        - "text/csv"
+        - "application/json"
+        - "text/yaml"
+        - "application/x-yaml"
+        - "text/x-python"
+        - "application/x-shellscript"
+        - "image/jpeg"
+        - "image/png"
+
+# Interface settings (optimized for technical work)
+interface:
+  endpointsMenu: true
+  modelSelect: true
+  parameters: true
+  sidePanel: true
+  presets: true
+  webSearch: true
+
+# Performance notes:
+# 🔬 Vision Analysis (qwen2.5vl:7b) - ~4-5GB VRAM, excellent for network diagrams
+# ⚡ Quick Vision (qwen2.5vl:3b) - ~2-3GB VRAM, fast image analysis
+# 💻 Network Engineering (qwen2.5-coder:32b) - ~12-14GB VRAM, best for configs
+# 🧠 Advanced Vision (gemma3:27b) - ~15-16GB VRAM, high-quality multimodal
+# 🚀 Quick Text (qwen2.5:3b) - ~1-2GB VRAM, lightning fast text
+
