@@ -188,7 +188,8 @@ export function getOpenAIConfig(
   /**
    * Note: OpenAI Web Search models do not support any known parameters besides `max_tokens`
    */
-  if (modelOptions.model && /gpt-4o.*search/.test(modelOptions.model)) {
+  // Fixed: Replace ReDoS vulnerable regex with safer string methods
+  if (modelOptions.model && modelOptions.model.startsWith('gpt-4o') && modelOptions.model.includes('search')) {
     const searchExcludeParams = [
       'frequency_penalty',
       'presence_penalty',

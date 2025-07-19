@@ -15,7 +15,11 @@ export function normalizeServerName(serverName: string): string {
     This preserves the general structure while ensuring compatibility. 
     Trims leading/trailing underscores
     */
-  const normalized = serverName.replace(/[^a-zA-Z0-9_.-]/g, '_').replace(/^_+|_+$/g, '');
+  // Fixed: Split ReDoS vulnerable alternation into separate operations
+  const normalized = serverName
+    .replace(/[^a-zA-Z0-9_.-]/g, '_')
+    .replace(/^_+/, '')   // Remove leading underscores
+    .replace(/_+$/, '');  // Remove trailing underscores
 
   // If the result is empty (e.g., all characters were non-ASCII and got trimmed),
   // generate a fallback name to ensure we always have a valid function name

@@ -79,8 +79,9 @@ export default function useArtifacts() {
     lastContentRef.current = latestArtifact?.content ?? null;
 
     const latestMessageText = getLatestText(latestMessage);
+    // Fixed: Add length limits to prevent ReDoS attacks
     const hasEnclosedArtifact =
-      /:::artifact(?:\{[^}]*\})?(?:\s|\n)*(?:```[\s\S]*?```(?:\s|\n)*)?:::/m.test(
+      /:::artifact(?:\{[^}]{0,200}\})?[\s\n]{0,50}(?:```[\s\S]{1,10000}?```[\s\n]{0,50})?:::/m.test(
         latestMessageText.trim(),
       );
 

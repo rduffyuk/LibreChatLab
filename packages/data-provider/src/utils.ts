@@ -27,7 +27,8 @@ export function extractEnvVariable(value: string) {
   }
 
   // For multiple variables, process them using a regex loop
-  const regex = /\${([^}]+)}/g;
+  // Fixed: Add length limit to prevent ReDoS attacks
+  const regex = /\${([^}]{1,100})}/g;
   let result = trimmed;
 
   // First collect all matches and their positions
