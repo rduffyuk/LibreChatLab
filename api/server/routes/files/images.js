@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs').promises;
+const { safeUnlink } = require('../../utils/pathValidator');
 const express = require('express');
 const { isAgentsEndpoint } = require('librechat-data-provider');
 const {
@@ -41,7 +42,8 @@ router.post('/', async (req, res) => {
     res.status(500).json({ message: 'Error processing file' });
   } finally {
     try {
-      await fs.unlink(req.file.path);
+      const uploadsBasePath = path.resolve(req.app.locals.paths.uploads);
+      await safeUnlink(req.file.path, uploadsBasePath, logger);
       logger.debug('[/files/images] Temp. image upload file deleted');
     } catch (error) {
       logger.debug('[/files/images] Temp. image upload file already deleted');

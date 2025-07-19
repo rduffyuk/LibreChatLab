@@ -16,6 +16,7 @@ const { connectDb, indexSync } = require('~/db');
 const validateImageRequest = require('./middleware/validateImageRequest');
 const { jwtLogin, ldapLogin, passportLogin } = require('~/strategies');
 const errorController = require('./controllers/ErrorController');
+const rateLimiters = require('./middleware/rateLimiter');
 const initializeMCP = require('./services/initializeMCP');
 const configureSocialLogins = require('./socialLogins');
 const AppService = require('./services/AppService');
@@ -90,11 +91,11 @@ const startServer = async () => {
     await configureSocialLogins(app);
   }
 
-  app.use('/oauth', routes.oauth);
+  app.use('/oauth', rateLimiters.auth, routes.oauth);
   /* API Endpoints */
-  app.use('/api/auth', routes.auth);
-  app.use('/api/actions', routes.actions);
-  app.use('/api/keys', routes.keys);
+  app.use('/api/auth', rateLimiters.auth, routes.auth);
+  app.use('/api/actions', rateLimiters.api, routes.actions);
+  app.use('/api/keys', rateLimiters.sensitive, routes.keys);
   app.use('/api/user', routes.user);
   app.use('/api/search', routes.search);
   app.use('/api/edit', routes.edit);
@@ -105,20 +106,20 @@ const startServer = async () => {
   app.use('/api/categories', routes.categories);
   app.use('/api/tokenizer', routes.tokenizer);
   app.use('/api/endpoints', routes.endpoints);
-  app.use('/api/balance', routes.balance);
-  app.use('/api/models', routes.models);
-  app.use('/api/plugins', routes.plugins);
-  app.use('/api/config', routes.config);
-  app.use('/api/assistants', routes.assistants);
-  app.use('/api/files', await routes.files.initialize());
-  app.use('/images/', validateImageRequest, routes.staticRoute);
-  app.use('/api/share', routes.share);
-  app.use('/api/roles', routes.roles);
-  app.use('/api/agents', routes.agents);
-  app.use('/api/banner', routes.banner);
-  app.use('/api/memories', routes.memories);
-  app.use('/api/tags', routes.tags);
-  app.use('/api/mcp', routes.mcp);
+  app.use('/api/balance', rateLimiters.sensitive, routes.balance);
+  app.use('/api/models', rateLimiters.api, routes.models);
+  app.use('/api/plugins', rateLimiters.plugins, routes.plugins);
+  app.use('/api/config', rateLimiters.api, routes.config);
+  app.use('/api/assistants', rateLimiters.api, routes.assistants);
+  app.use('/api/files', rateLimiters.files, await routes.files.initialize());
+  app.use('/images/', rateLimiters.files, validateImageRequest, routes.staticRoute);
+  app.use('/api/share', rateLimiters.api, routes.share);
+  app.use('/api/roles', rateLimiters.api, routes.roles);
+  app.use('/api/agents', rateLimiters.api, routes.agents);
+  app.use('/api/banner', rateLimiters.api, routes.banner);
+  app.use('/api/memories', rateLimiters.api, routes.memories);
+  app.use('/api/tags', rateLimiters.api, routes.tags);
+  app.use('/api/mcp', rateLimiters.api, routes.mcp);
 
   // Add the error controller one more time after all routes
   app.use(errorController);

@@ -1,4 +1,5 @@
 const fs = require('fs').promises;
+const { safeUnlink } = require('../../utils/pathValidator');
 const express = require('express');
 const { EnvVar } = require('@librechat/agents');
 const {
@@ -407,7 +408,8 @@ router.post('/', async (req, res) => {
 
     // TODO: delete remote file if it exists
     try {
-      await fs.unlink(req.file.path);
+      const uploadsBasePath = path.resolve(req.app.locals.paths.uploads);
+      await safeUnlink(req.file.path, uploadsBasePath, logger);
       cleanup = false;
     } catch (error) {
       logger.error('[/files] Error deleting file:', error);
@@ -417,7 +419,8 @@ router.post('/', async (req, res) => {
 
   if (cleanup) {
     try {
-      await fs.unlink(req.file.path);
+      const uploadsBasePath = path.resolve(req.app.locals.paths.uploads);
+      await safeUnlink(req.file.path, uploadsBasePath, logger);
     } catch (error) {
       logger.error('[/files] Error deleting file after file processing:', error);
     }
